@@ -18,7 +18,7 @@ class PostRepository(private val api: PostApiService) {
     suspend fun getPosts() = api.getPosts()
 
     suspend fun createPost(post: Post) {
-        val file = File(post.photo) // path like /storage/emulated/.../image.jpg
+        val file = File(post.photo)
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         val photoPart = MultipartBody.Part.createFormData("photo", file.name, requestFile)
 

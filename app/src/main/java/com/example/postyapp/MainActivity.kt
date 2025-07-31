@@ -28,9 +28,6 @@ class MainActivity : ComponentActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-
-
-
         val api = retrofit.create(PostApiService::class.java)
         val repository = PostRepository(api)
 
