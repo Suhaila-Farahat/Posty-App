@@ -23,6 +23,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import java.io.File
+import java.io.FileOutputStream
 
 
 @Composable
@@ -83,12 +85,20 @@ fun PostDialog(
 
 
 fun getPathFromUri(context: Context, uri: Uri): String? {
-    val projection = arrayOf(MediaStore.Images.Media.DATA)
-    context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-        val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(columnIndex)
+    return try {
+        val inputStream = context.contentResolver.openInputStream(uri)
+        val file = File(context.cacheDir, "temp_image_${System.currentTimeMillis()}.jpg")
+        val outputStream = FileOutputStream(file)
+
+        inputStream?.copyTo(outputStream)
+
+        inputStream?.close()
+        outputStream.close()
+
+        file.absolutePath
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
-    return null
 }
 

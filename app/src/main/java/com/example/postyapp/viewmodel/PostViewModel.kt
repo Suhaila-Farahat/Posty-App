@@ -27,14 +27,12 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
             _error.value = null
             try {
                 val allPosts = repository.getPosts()
-                Log.d("PostViewModel", "Posts loaded: ${allPosts.size}")
                 allPosts.forEachIndexed { index, post ->
-                    Log.d("PostViewModel", "[$index] ID=${post.id}, Title=${post.title}, Content=${post.content}, Photo=${post.photo}")
+                    Log.d("postViewModel", "[$index] ID=${post.id}, Title=${post.title}, Content=${post.content}, Photo=${post.photo}")
                 }
                 _posts.value = allPosts
             } catch (e: Exception) {
                 _error.value = e.message
-                Log.e("PostViewModel", "Failed to load posts", e)
             } finally {
                 _isLoading.value = false
             }
@@ -49,7 +47,6 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
                 loadPosts()
             } catch (e: Exception) {
                 _error.value = e.message
-                Log.e("PostViewModel", "Create failed", e)
             }
         }
     }
@@ -65,19 +62,15 @@ class PostViewModel(private val repository: PostRepository) : ViewModel() {
     fun deletePost(id: Int?) {
         if (id == null || id == 0) {
             _error.value = "Cannot delete: Invalid post ID"
-            Log.e("PostViewModel", "Delete failed: invalid ID = $id")
             return
         }
 
         viewModelScope.launch {
             try {
-                Log.d("PostViewModel", "Calling deletePost($id)")
                 val response = repository.deletePost(id)
-                Log.d("PostViewModel", "Delete response: ${response.message}")
                 loadPosts()
             } catch (e: Exception) {
                 _error.value = e.message
-                Log.e("PostViewModel", "Delete failed", e)
             }
         }
     }

@@ -32,7 +32,7 @@ interface PostApiService {
 
 
     @Multipart
-    @PUT("blogs/update/{id}")
+    @POST("blogs/update/{id}")
     suspend fun updatePost(
         @Path("id") id: Int,
         @Part("title") title: RequestBody,

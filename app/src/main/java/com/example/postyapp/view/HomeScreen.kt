@@ -1,6 +1,5 @@
 package com.example.postyapp.view
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
@@ -16,8 +15,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.postyapp.model.model.Post
@@ -64,21 +63,50 @@ fun HomeScreen(viewModel: PostViewModel, onPostClick: (Post) -> Unit) {
                 }
 
                 error != null -> {
-                    Text("Error: $error", modifier = Modifier.align(Alignment.Center))
-                    Log.e("HomeScreen", "UI Error: $error")
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("Oops!", style = MaterialTheme.typography.headlineSmall)
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            "We couldn't connect to the server. Please check your internet connection and try again",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = { viewModel.loadPosts() }) {
+                            Text("Try Again")
+                        }
+                    }
                 }
 
                 else -> {
-                    LazyColumn(
-                        contentPadding = PaddingValues(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        itemsIndexed(posts) { index, post ->
-                            AnimatedVisibility(
-                                visible = true,
-                                enter = fadeIn(animationSpec = tween(300)) + slideInVertically(initialOffsetY = { it * (index + 1) / 4 }),
-                            ) {
-                                PostItem(post = post, onClick = { onPostClick(post) })
+                    if (posts.isEmpty()) {
+                        Text(
+                            text = "No posts available. Click the + button to create one!",
+                            modifier = Modifier.align(Alignment.Center),
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Gray
+                        )
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            itemsIndexed(posts) { index, post ->
+                                AnimatedVisibility(
+                                    visible = true,
+                                    enter = fadeIn(animationSpec = tween(300)) + slideInVertically(initialOffsetY = { it * (index + 1) / 4 }),
+                                ) {
+                                    PostItem(post = post, onClick = { onPostClick(post) })
+                                }
                             }
                         }
                     }

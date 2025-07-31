@@ -29,12 +29,9 @@ class PostRepository(private val api: PostApiService) {
 
         if (!response.isSuccessful) {
             val errorBody = response.errorBody()?.string()
-            Log.e("PostRepository", "CreatePost failed - Code: ${response.code()}, Error: $errorBody")
             throw Exception("Create failed: ${response.code()} $errorBody")
         }
     }
-
-
 
     suspend fun updatePost(post: Post) {
         val id = post.id ?: throw IllegalArgumentException("Post ID is required")
@@ -53,7 +50,6 @@ class PostRepository(private val api: PostApiService) {
 
                 api.updatePost(id, titlePart, contentPart, photoPart)
             } catch (e: Exception) {
-                Log.e("PostRepository", "Local image file error", e)
                 throw IllegalArgumentException("Invalid photo selected. Please choose another image.")
             }
         } else {
@@ -62,7 +58,6 @@ class PostRepository(private val api: PostApiService) {
 
         if (!response.isSuccessful) {
             val errorBody = response.errorBody()?.string()
-            Log.e("PostRepository", "UpdatePost failed - Code: ${response.code()}, Error: $errorBody")
             throw Exception("Update failed: ${response.code()} $errorBody")
         }
     }
@@ -70,7 +65,6 @@ class PostRepository(private val api: PostApiService) {
 
     suspend fun deletePost(id: Int): DeleteResponse {
         val response = api.deletePost(id)
-        Log.d("PostRepository", "Delete response: ${response.message}")
         return response
     }
 }
